@@ -1,0 +1,3 @@
+include README README.md MANIFEST.in COPYING
+recursive-include hq_warehouse *.py
+

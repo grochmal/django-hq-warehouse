@@ -1,0 +1,18 @@
+{% extends "hq_main/hq.html" %}
+
+{% block title %}
+{{ forex.currency_from.name }} -&gt; {{ forex.currency_to.name }}
+{% endblock %}
+
+{% block page_body %}
+<div>From: {{ forex.currency_from.name }}</div>
+<div>To: {{ forex.currency_to.name }}</div>
+<div>On: {{ forex.date_valid|date:'l, F jS o - g:iA' }}</div>
+<div>Rate: {{ forex.rate|floatformat:2 }}</div>
+<div>
+Batch: {{ forex.batch_id }}
+Staging ID: {{ forex.origin_id }}
+Inserted: {{ forex.insert_date|date:'l, F jS o - g:iA' }}
+</div>
+{% endblock %}
+

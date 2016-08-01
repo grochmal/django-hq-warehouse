@@ -1,0 +1,48 @@
+{% extends "hq_main/hq.html" %}
+
+{% block title %}
+{{ offer.hotel_id }} - {{ offer.price_usd|floatformat:2 }}
+{% endblock %}
+
+{% block page_body %}
+<div>Hotel: {{ offer.hotel_id }}</div>
+<div>
+  Price:
+  {{ offer.price_usd }} USD
+  OR
+  {{ offer.original_price}} {{ offer.original_currency.code }}
+</div>
+<div>Breakfast included:
+  {% if offer.breakfast_included %}
+    Yes
+  {% else %}
+    No
+  {% endif %}
+</div>
+<div>Check-in: {{ offer.checkin_date|date:'M d, Y' }}</div>
+<div>Check-out: {{ offer.checkout_date|date:'M d, Y' }}</div>
+<div>
+  Offer valid from:
+  {{ offer.valid_from_date|date:'M d, Y' }}
+  at
+  {{ offer.valid_from_time|time:'H:i:s' }}
+</div>
+<div>
+  Offer valid until:
+  {{ offer.valid_to_date|date:'M d, Y' }}
+  at
+  {{ offer.valid_to_time|time:'H:i:s' }}
+</div>
+<div>
+Batch: {{ forex.batch_id }}
+Staging ID: {{ forex.origin_id }}
+Inserted: {{ forex.insert_date|date:'l, F jS o - g:iA' }}
+</div>
+
+{# This is the only part that can be updated #}
+<form action="" method="post">{% csrf_token %}
+  {{ form.as_p }}
+  <p>Submit button not provided, sorry.</p>
+</form>
+{% endblock %}
+

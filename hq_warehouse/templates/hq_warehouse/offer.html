@@ -1,0 +1,55 @@
+{% extends "hq_main/hq.html" %}
+
+{% block title %}
+{{ offer.hotel_id }} - {{ offer.price_usd|floatformat:2 }}
+{% endblock %}
+
+{% block page_body %}
+<div>Hotel: {{ offer.hotel_id }}</div>
+<div>
+  Price:
+  {{ offer.price_usd }} USD
+  OR
+  {{ offer.original_price}} {{ offer.original_currency.code }}
+</div>
+<div>Breakfast included:
+  {% if offer.breakfast_included %}
+    Yes
+  {% else %}
+    No
+  {% endif %}
+</div>
+<div>Check-in: {{ offer.checkin_date|date:'M d, Y' }}</div>
+<div>Check-out: {{ offer.checkout_date|date:'M d, Y' }}</div>
+<div>
+  Offer valid from:
+  {{ offer.valid_from_date|date:'M d, Y' }}
+  at
+  {{ offer.valid_from_time|time:'H:i:s' }}
+</div>
+<div>
+  Offer valid until:
+  {{ offer.valid_to_date|date:'M d, Y' }}
+  at
+  {{ offer.valid_to_time|time:'H:i:s' }}
+</div>
+<div>
+Batch: {{ forex.batch_id }}
+Staging ID: {{ forex.origin_id }}
+Inserted: {{ forex.insert_date|date:'l, F jS o - g:iA' }}
+</div>
+
+{% if offer.invalid != None %}
+  <div>Valid:
+    {% if offer.invalid %}
+      No
+    {% else %}
+      Yes
+    {% endif %}
+  </div>
+  <div>
+    <a href="{% url 'hq_warehouse:update' pk=offer.id %}">Update offer</a>
+  </div>
+{% endif %}
+{% endblock %}
+

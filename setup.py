@@ -27,17 +27,17 @@ REQS = [
     ]
 
 CONSOLE_SCRIPTS = [
-      'hqw-check-table=hq_warehouse.command_line:load_table'
+      'hqw-check-table=hq_warehouse.command_line:check_table'
     ]
 
 setup(
-      name             = hq_stage.pkgname
-    , description      = hq_stage.__description__
-    , version          = hq_stage.__version__
-    , author           = hq_stage.__author__
-    , author_email     = hq_stage.__author_email__
-    , license          = hq_stage.__license__
-    , url              = hq_stage.__url__
+      name             = hq_warehouse.pkgname
+    , description      = hq_warehouse.__description__
+    , version          = hq_warehouse.__version__
+    , author           = hq_warehouse.__author__
+    , author_email     = hq_warehouse.__author_email__
+    , license          = hq_warehouse.__license__
+    , url              = hq_warehouse.__url__
     , long_description = read('README')
     , packages         = [ 'hq_warehouse' ]
     , classifiers      = CLS

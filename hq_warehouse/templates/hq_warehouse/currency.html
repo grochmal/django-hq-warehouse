@@ -1,0 +1,16 @@
+{% extends "hq_main/hq.html" %}
+
+{% block title %}
+{{ currency.id }} - {{ currency.name }}
+{% endblock %}
+
+{% block page_body %}
+<div>Name: {{ currency.name }}</div>
+<div>ISO Code: {{ currency.code }}</div>
+<div>
+Batch: {{ currency.batch_id }}
+Staging ID: {{ currency.origin_id }}
+Inserted: {{ currency.insert_date|date:'l, F jS o - g:iA' }}
+</div>
+{% endblock %}
+

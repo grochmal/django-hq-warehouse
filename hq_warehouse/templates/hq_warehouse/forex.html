@@ -5,10 +5,12 @@
 {% endblock %}
 
 {% block page_body %}
+{{ block.super }}
+
 <div>From: {{ forex.currency_from.name }}</div>
 <div>To: {{ forex.currency_to.name }}</div>
-<div>On: {{ forex.date_valid|date:'l, F jS o - g:iA' }}</div>
-<div>Rate: {{ forex.rate|floatformat:2 }}</div>
+<div>On: {{ forex.date_valid|date:'l, F jS o' }}</div>
+<div>Rate: {{ forex.rate|floatformat:6 }}</div>
 <div>
 Batch: {{ forex.batch_id }}
 Staging ID: {{ forex.origin_id }}

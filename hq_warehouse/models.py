@@ -12,13 +12,13 @@ class Origin(models.Model):
     Keep the log of the origin of this row.
     '''
     batch_id = models.BigIntegerField(
-          _('batch_id')
+          _('batch id')
         , editable=False
         , db_index=True
         , help_text=_('original batch of data load')
         )
     origin_id = models.BigIntegerField(
-          _('origin_id')
+          _('origin id')
         , editable=False
         , help_text=_('id of original item in the stage database')
         )
@@ -29,14 +29,24 @@ class Origin(models.Model):
         , help_text=_('insert timestamp of this row in the warehouse')
         )
 
+    def save(self, *args, **kwargs):
+        if self.pk is None:  # this is an insert
+            tz = timezone(settings.TIME_ZONE)
+            self.insert_date = tz.localize(datetime.datetime.now())
+        super(Origin, self).save(*args, **kwargs)
+
     class Meta:
         abstract = True
 
 
 class Currency(Origin):
+    '''
+    The Currency only needs to be indexed by id.
+    '''
     code = models.CharField(
           _('code')
         , max_length=3
+        , unique=True
         , help_text=_('iso 4217 currency code')
         )
     name = models.CharField(
@@ -57,6 +67,11 @@ class Currency(Origin):
 
 
 class Forex(Origin):
+    '''
+    Foreign Exchange Rates, these need to be heavily indexed for quicker
+    searches.  The indexes impact insert time but that shall no hinder us too
+    much since there are not that many rows.
+    '''
     currency_from = models.ForeignKey(
           Currency
         , verbose_name=_('currency from')
@@ -74,14 +89,15 @@ class Forex(Origin):
         , help_text=_('date for which this rate can be applied')
         )
     rate = models.DecimalField(
-          max_digits=9
-        , decimal_places=6
+          _('exchange rate')
+        , max_digits=20
+        , decimal_places=10
         )
 
     def __str__(self):
         return ( self.currency_from.name
                + ' -> '
-               + self.currency.to
+               + self.currency_to.name
                + ' @ '
                + str(self.date_valid)
                )
@@ -90,10 +106,10 @@ class Forex(Origin):
         return reverse('hq_warehouse:forex', kwargs={ 'pk' : self.id })
 
     class Meta:
-        index_together = [
-              ( 'currency_from' , 'currency_to' )
-            , ( 'currency_from' , 'currency_to' , 'date_valid' )
-            ]
+        unique_together = [ ( 'currency_from'
+                            , 'currency_to'
+                            , 'date_valid' ) ]
+        index_together = [ ( 'currency_from' , 'currency_to' ) ]
         verbose_name = _('foreign exchange rate')
         verbose_name_plural = _('foreign exchange rates')
 
@@ -151,7 +167,7 @@ class Offer(Origin):
         , help_text=_('time of the day this offer becomes valid')
         )
     valid_to_time = models.TimeField(
-        _('valid to time')
+          _('valid to time')
         , help_text=_('time of day this offer becomes invalid')
         )
     checkin_date = models.DateField(
@@ -166,9 +182,9 @@ class Offer(Origin):
     def __str__(self):
         return ( str(self.hotel_id)
                + ' @ '
-               + self.valid_from.strftime('%Y%m%d%H%M')
+               + self.valid_from_date.strftime('%Y%m%d%H%M')
                + ' - '
-               + self.valid_to.strftime('%Y%m%d%H%M')
+               + self.valid_to_date.strftime('%Y%m%d%H%M')
                )
 
     class Meta:
@@ -180,7 +196,7 @@ class ValidOffer(Offer):
     Since offers are valid for a defined period of time they become invalid at
     a certain point.  This is the only update operation happening on this fact
     table, the update shall have no effect on queries against the warehouse but
-    it may be very useful to extract the data from the warehouse into data
+    it may be very useful when extracting the data from the warehouse into data
     marts.
 
     The API calls are made towards the data mart, therefore we do not need
@@ -199,8 +215,8 @@ class ValidOffer(Offer):
         return reverse('hq_warehouse:valid', kwargs={ 'pk' : self.id })
 
     class Meta:
-        unique_together = ( 'hotel_id'     , 'breakfast_included'
-                          , 'checkin_date' , 'checkout_date'      )
+        unique_together = [ ( 'hotel_id'     , 'breakfast_included'
+                            , 'checkin_date' , 'checkout_date'      ) ]
         verbose_name = _('valid offer')
         verbose_name_plural = _('valid offers')
 
@@ -208,15 +224,15 @@ class ValidOffer(Offer):
 class InvalidOffer(Offer):
     '''
     We might want old invalid offers for statistical queries.  If an offer is
-    not valid anymore at the moment it is lifted from the stage area it will
+    not valid anymore at the moment it is lifted from the staging area it will
     be placed in this table instead of the Valid Offer table.
     '''
     def get_absolute_url(self):
         return reverse('hq_warehouse:invalid', kwargs={ 'pk' : self.id })
 
     class Meta:
-        unique_together = ( 'hotel_id'     , 'breakfast_included'
-                          , 'checkin_date' , 'checkout_date'      )
+        unique_together = [ ( 'hotel_id'     , 'breakfast_included'
+                            , 'checkin_date' , 'checkout_date'      ) ]
         verbose_name = _('invalid offer')
         verbose_name_plural = _('invalid offers')
 

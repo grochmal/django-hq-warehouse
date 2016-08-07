@@ -27,7 +27,8 @@ REQS = [
     ]
 
 CONSOLE_SCRIPTS = [
-      'hqw-check-table=hq_warehouse.command_line:check_table'
+      'hqw-checkout-bacth=hq_warehouse.command_line:checkout_batch'
+    , 'hqw-checkout-table=hq_warehouse.command_line:checkout_table'
     ]
 
 setup(

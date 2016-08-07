@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block page_body %}
+{{ block.super }}
+
 <div>Name: {{ currency.name }}</div>
 <div>ISO Code: {{ currency.code }}</div>
 <div>

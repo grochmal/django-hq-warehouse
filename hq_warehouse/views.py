@@ -3,6 +3,10 @@ from django.views import generic
 from . import models
 
 
+class DocView(generic.TemplateView):
+    template_name = 'hq_warehouse/doc.html'
+
+
 class HqWarehouseListView(generic.ListView):
     template_name = 'hq_main/list.html'
     context_object_name = 'object_list'

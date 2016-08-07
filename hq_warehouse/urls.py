@@ -34,12 +34,16 @@ urlpatterns = [
          , name='invalid'
          )
     , url( r'^invalid-offer/$'
-         , views.InvalidOfferView.as_view()
+         , views.InvalidOfferListView.as_view()
          , name='invalid_list'
          )
     , url( r'^offer-update/(?P<pk>\d+)/'
          , views.ValidOfferUpdateView.as_view()
          , name='update'
+         )
+    , url( r''
+         , views.DocView.as_view()
+         , name='doc'
          )
 ]
 

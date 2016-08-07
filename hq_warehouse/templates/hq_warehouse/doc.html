@@ -1,0 +1,41 @@
+{% extends "hq_main/hq.html" %}
+
+{% block title %}
+HQ Warehouse
+{% endblock %}
+
+{% block page_body %}
+{{ block.super }}
+
+<h1>HQ Warehouse</h1>
+
+<h3>Available commands</h3>
+
+<p>
+The commands checkout data from the staging area and insert it into the
+warehouse.
+</p>
+
+<pre>
+hqw-checkout-batch [-hv] -b &lt;batch number&gt;
+</pre>
+
+<pre>
+hqs-checkout-table [-hv] -t &lt;table&gt;
+</pre>
+
+<div>Available Tables</div>
+
+<ul>
+  <li><code>currency</code></li>
+  <li><code>forex</code></li>
+  <li><code>offer</code> (both valid and invalid are processed)</li>
+</ul>
+
+<p>
+Preferably use batch numbers, since the loading order is always the correct one
+from a batch.  If you checkout data table by table do it for the currency,
+forex and offer tables, in that order.
+</p>
+{% endblock %}
+

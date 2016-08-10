@@ -41,7 +41,7 @@ class Origin(models.Model):
 
 class Currency(Origin):
     '''
-    The Currency only needs to be indexed by id.
+    The Currency only needs to be indexed by id and code.
     '''
     code = models.CharField(
           _('code')
@@ -69,8 +69,8 @@ class Currency(Origin):
 class Forex(Origin):
     '''
     Foreign Exchange Rates, these need to be heavily indexed for quicker
-    searches.  The indexes impact insert time but that shall no hinder us too
-    much since there are not that many rows.
+    searches.  The indexes impact insert time but that shall not hinder us too
+    much since there aren't that many rows.
     '''
     currency_from = models.ForeignKey(
           Currency
@@ -223,9 +223,9 @@ class ValidOffer(Offer):
 
 class InvalidOffer(Offer):
     '''
-    We might want old invalid offers for statistical queries.  If an offer is
-    not valid anymore at the moment it is lifted from the staging area it will
-    be placed in this table instead of the Valid Offer table.
+    We may want old invalid offers for statistical queries.  If an offer is not
+    valid anymore at the moment it is lifted from the staging area it will be
+    placed in this table instead of the Valid Offer table.
     '''
     def get_absolute_url(self):
         return reverse('hq_warehouse:invalid', kwargs={ 'pk' : self.id })

@@ -18,10 +18,20 @@ warehouse.
 
 <pre>
 hqw-checkout-batch [-hv] -b &lt;batch number&gt;
+
+  -h  Print usage.
+  -v  Be verbose, print successes as well as errors.
+  -b  The batch number in the staging area to attempt to fetch for the
+      warehouse, it must be a valid batch number (must exist)
 </pre>
 
 <pre>
 hqs-checkout-table [-hv] -t &lt;table&gt;
+
+  -h  Print usage.
+  -v  Be verbose, print successes as well as errors.
+  -t  A table that may contain error rows in the staging area, it uses the
+      warehouse naming convention: either `currency`, `forex` or `offer`.
 </pre>
 
 <div>Available Tables</div>

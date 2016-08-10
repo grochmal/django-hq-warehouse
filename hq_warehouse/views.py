@@ -47,8 +47,8 @@ class ForexView(generic.DetailView):
 # below.
 #
 # To get to the update view from the list view we can use the link inside this
-# view.  This is pretty bad design since it is logic inside a template and
-# actually and should be changed, but for now it makes the code simpler.
+# view.  This is pretty bad design since it is logic inside a template (and
+# should be changed) but, for now, it makes the code simpler.
 class ValidOfferView(generic.DetailView):
     model = models.ValidOffer
     template_name = 'hq_warehouse/offer.html'

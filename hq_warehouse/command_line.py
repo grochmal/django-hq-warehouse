@@ -8,8 +8,8 @@ from django.db import IntegrityError
 
 
 # A trivial memory cache.  In the real world we should use memcached or redis
-# since those can purge records if the cache is too big.  For out purpose we
-# are ignoring the fact that the cache need to be purged from time to time and
+# since those can purge records if the cache is too big.  For our purposes we
+# are ignoring the fact that the cache needs to be purged from time to time and
 # inserting *all* dimension records we come across.  We know the size of the
 # dimension tables, therefore it is very unlikely that we will end out of
 # memory.
@@ -48,6 +48,9 @@ def settings_path():
         sys.exit(1)
 
 def warehouse_start(stage_object, batch=None):
+    '''
+    Keep track of the staging are row when inserting into the warehouse.
+    '''
     warehouse_object = {}
     if batch:
         warehouse_object['batch_id'] = batch.id
@@ -86,8 +89,11 @@ def save_to_warehouse(model, wparams):
     otherwise return None.
 
     If a record in the staging area has the same values as a unique index of a
-    record in the warehouse consider that it is a duplicate.  And just ignore
-    the fact that it was uploaded twice to the staging area.
+    record already in the warehouse consider that it is a duplicate.  And just
+    ignore the fact that it was uploaded twice to the staging area.
+
+    Ignoring duplicate transactions is the basis for any system that may need
+    to be distributed across several machines.
     '''
     try:
         wobj = model(**wparams)
@@ -184,7 +190,7 @@ def get_forex(key, wmod):
 
     *   First try the cache
     *   If that fails try to find in the database
-    *   If not such forex is in the database use the most recent forex between
+    *   If no such forex is in the database use the most recent forex between
         the two currencies.  That's not perfect, but better than nothing.
     '''
     global FOREX
@@ -334,7 +340,7 @@ def checkout_offer(sobj, smod, wmod, settings, batch=None):
     twist since an offer from the staging area can be loaded either into Valid
     Offer or Invalid Offer based on a flag.  This makes the valid_offer flag
     the most important field to be verified, since we do not know where to
-    attempt an insert if we cannot parse the field.
+    attempt an insert if we cannot parse that field.
     '''
     global CURRENCY_USD
     wparams = warehouse_start(sobj, batch)
@@ -456,7 +462,7 @@ def checkout_offer(sobj, smod, wmod, settings, batch=None):
     # And this is even trickier.  We parsed the staging are record and,
     # if it is fine, we need to add it to the warehouse.  Yet, the warehouse
     # has two tables to add to, Valid Offer and Invalid Offer.  We need to
-    # check the flag in the staging area and from that select the warehouse
+    # check the flag in the staging area and, from that, select the warehouse
     # table.
     data = match_pass(sobj.valid_offer_flag, r'^-?\d+$')
     if data:
@@ -496,7 +502,7 @@ def checkout_batch():
     from hq_stage import models as smod
     from hq_warehouse import models as wmod
 
-    usage = 'hqw-checkout-table [-hv] -b <batch number>'
+    usage = 'hqw-checkout-batch [-hv] -b <batch number>'
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'hvb:')
     except getopt.GetoptError as e:
